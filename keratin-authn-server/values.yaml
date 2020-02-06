@@ -41,6 +41,16 @@ redisUrl: "redis://localhost:6379/0"
 
 ## Optional
 
+# The PORT specifies where the AuthN server should bind. This may be different from the AUTHN_URL in scenarios with port mapping, as with load balancers and Docker containers
+port: "8081"
+
+# Specifying PUBLIC_PORT instructs AuthN to bind on a second port with only public routes.
+publicPort: "8080"
+
+# Configures AuthN to report panics and unhandled errors to a Sentry backend.
+sentryDsn: ""
+
+
 # TODO: add other paramters
 
 serviceAccount:
