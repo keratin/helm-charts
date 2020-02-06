@@ -29,18 +29,39 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 3000
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          env:
+            - name: AUTHN_URL
+              value: {{ .Values.authnUrl }}
+            - name: APP_DOMAINS
+              value: {{ .Values.appDomains }}
+            - name: HTTP_AUTH_USERNAME
+              value: {{ .Values.httpAuthUsername }}
+            - name: HTTP_AUTH_PASSWORD
+              value: {{ .Values.httpAuthPassword }}
+            - name: SECRET_KEY_BASE
+              value: {{ .Values.secretKeyBase }}
+            - name: DATABASE_URL
+              value: {{ .Values.databaseUrl }}
+            - name: REDIS_URL
+              value: {{ .Values.redisUrl }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        - name: {{ .Chart.Name }}-redis
+          image: redis:5.0.5-alpine
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
