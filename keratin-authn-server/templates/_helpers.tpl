@@ -61,3 +61,13 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+
+{{- define "redis.masterFullname" -}}
+{{- printf "%s-%s" .Release.Name  "redis-master" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+{{- define "redis.masterConnectString" -}}
+{{- printf "redis://%s-%s:6379/0" .Release.Name  "redis-master" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

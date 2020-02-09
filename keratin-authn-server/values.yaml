@@ -12,55 +12,41 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-# Settings
+appSettings:
+  authnUrl: ""        # Base URL of the AuthN service i.e. "http://example.com"
+  appDomains: ""      # Comma-delimited list of app domains (host and optionally port, no path) i.e: "example.com,app.example.com"
+  publicPort: "8000"      # Public port to be accessed by clients
 
-## Requred
-
-# This specifies the base URL of the AuthN service. It will be embedded in all issued JWTs as the iss. 
-# See https://github.com/keratin/authn-server/blob/master/docs/config.md#authn_url
-authnUrl: ""
-# Comma-delimited list of domains (host and optionally port, no path)
-# See https://github.com/keratin/authn-server/blob/master/docs/config.md#app_domains
-appDomains: ""
-
-# Credentials to protect internal API
-# See https://github.com/keratin/authn-server/blob/master/docs/config.md#http_auth_username
-httpAuthUsername: ""
-httpAuthPassword: ""
+internalApi:
+  port: "8080"        # internal API port to be accessed by other services
+  username: ""        # basic auth username
+  password: ""        # basic auth password
 
 # Any HMAC keys used by AuthN will be derived from this base value. 64-byte string, and can be generated with SecureRandom.hex(64)
 # See https://github.com/keratin/authn-server/blob/master/docs/config.md#secret_key_base
 secretKeyBase: ""
 
-# The database URL specifies the driver, host, port, database name, and connection credentials
-# See https://github.com/keratin/authn-server/blob/master/docs/config.md#database_url
-databaseUrl: ""
+# Provide these parameters if you use managed version of mysql or redis (set redis.enabled or mariadb.enabled to false)
+persistence:
+  databaseUrl: ""
+  redisUrl: ""
 
-# Redis url for sessions
-redisUrl: "redis://localhost:6379/0"
+# Here other env variables from https://github.com/keratin/authn-server/blob/master/docs/config.md#secret_key_base can be provided
+env: {}
+  # USERNAME_IS_EMAIL: ""
+  # EMAIL_USERNAME_DOMAINS: ""
 
-## Optional
+  # PASSWORD_POLICY_SCORE: ""
+   
+  # FACEBOOK_OAUTH_CREDENTIALS: "<appId>:<appSecret>"
+  # GITHUB_OAUTH_CREDENTIALS: ""
+  # GOOGLE_OAUTH_CREDENTIALS: ""
+  # DISCORD_OAUTH_CREDENTIALS: ""
 
-# The PORT specifies where the AuthN server should bind. This may be different from the AUTHN_URL in scenarios with port mapping, as with load balancers and Docker containers
-port: "8081"
+  # PROXIED: true
 
-# Specifying PUBLIC_PORT instructs AuthN to bind on a second port with only public routes.
-publicPort: "8080"
-
-# Configures AuthN to report panics and unhandled errors to a Sentry backend.
-sentryDsn: ""
-
-
-# TODO: add other paramters
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: false
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name:
+  # SENTRY_DSN: ""
+  # AIRBRAKE_CREDENTIALS: ""
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -73,6 +59,28 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+redis:
+  enabled: true
+  usePassword: false
+  cluster:
+    enabled: false                    # enable clustering if needed (keratin works only with one instance)
+  master:
+    persistence:
+      enabled: false                  # enable persistence for production use
+
+mariadb:
+  enabled: true
+  replication:
+    enabled: false
+  db:
+    name: keratin-authn-server
+    user: keratin-authn-server
+  master:
+    persistence:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 1Gi                       # adjust this size for the task
+
 service:
   type: ClusterIP
   port: 80
@@ -83,12 +91,12 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
+    - host: auth.example.com
       paths: []
   tls: []
-  #  - secretName: chart-example-tls
+  #  - secretName: auth-example-com-tls
   #    hosts:
-  #      - chart-example.local
+  #      - auth.example.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

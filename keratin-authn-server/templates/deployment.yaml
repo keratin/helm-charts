@@ -18,7 +18,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "keratin-authn-server.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -29,48 +28,53 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.publicPort }}
+              containerPort: 3000
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+              httpHeaders:
+                - name: Host
+                  value:  {{ .Values.authnUrl }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+              httpHeaders:
+                - name: Host
+                  value:  {{ .Values.authnUrl }}
+         
           env:
             - name: AUTHN_URL
-              value: {{ .Values.authnUrl }}
+              value: {{ .Values.appSettings.authnUrl }}
             - name: APP_DOMAINS
-              value: {{ .Values.appDomains }}
+              value: {{ .Values.appSettings.appDomains }}
+            - name: PUBLIC_PORT
+              value: {{ .Values.appSettings.publicPort }}
+
             - name: HTTP_AUTH_USERNAME
-              value: {{ .Values.httpAuthUsername }}
+              value: {{ .Values.internalApi.username }}
             - name: HTTP_AUTH_PASSWORD
-              value: {{ .Values.httpAuthPassword }}
+              value: {{ .Values.internalApi.password }}
+            - name: PORT
+              value: {{ .Values.internalApi.port }}
+
             - name: SECRET_KEY_BASE
               value: {{ .Values.secretKeyBase }}
+            
             - name: DATABASE_URL
-              value: {{ .Values.databaseUrl }}
+              value: {{ .Values.persistence.databaseUrl }}
             - name: REDIS_URL
-              value: {{ .Values.redisUrl }}
-            - name: PORT
-              value: "{{ .Values.port }}"
-            - name: PUBLIC_PORT
-              value: "{{ .Values.publicPort }}"
-            - name: SENTRY_DSN
-              value: "{{ .Values.sentryDsn }}"
-            - name: FACEBOOK_OAUTH_CREDENTIALS
-              value: "{{ .Values.facebook.appId }}:{{ .Values.facebook.appSecret }}"
+              value: {{ include "redis.masterConnectString" . | quote }} 
+              # value: {{ .Values.persistence.redisUrl }}
 
+            {{- range $key, $value := $.Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        - name: {{ .Chart.Name }}-redis
-          image: redis:5.0.5-alpine
-          ports:
-            - name: redis
-              containerPort: 6379
-              protocol: TCP
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
