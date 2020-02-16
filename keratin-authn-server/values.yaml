@@ -15,10 +15,10 @@ fullnameOverride: ""
 appSettings:
   authnUrl: ""        # Base URL of the AuthN service i.e. "http://example.com"
   appDomains: ""      # Comma-delimited list of app domains (host and optionally port, no path) i.e: "example.com,app.example.com"
-  publicPort: "8000"      # Public port to be accessed by clients
+  # publicPort: "8000"  # Public port to be accessed by clients
 
 internalApi:
-  port: "8080"        # internal API port to be accessed by other services
+  # port: "8080"        # internal API port to be accessed by other services
   username: ""        # basic auth username
   password: ""        # basic auth password
 
@@ -26,7 +26,8 @@ internalApi:
 # See https://github.com/keratin/authn-server/blob/master/docs/config.md#secret_key_base
 secretKeyBase: ""
 
-# Provide these parameters if you use managed version of mysql or redis (set redis.enabled or mariadb.enabled to false)
+# Provide these parameters if you use external instance of mysql or redis 
+# don't forget to set redis.enabled or/and mariadb.enabled to false
 persistence:
   databaseUrl: ""
   redisUrl: ""
@@ -84,6 +85,7 @@ mariadb:
 service:
   type: ClusterIP
   port: 80
+  internal: 8080
 
 ingress:
   enabled: false

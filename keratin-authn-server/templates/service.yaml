@@ -11,5 +11,9 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - port: {{ .Values.service.internal }}
+      targetPort: internal
+      protocol: TCP
+      name: internal
   selector:
     {{- include "keratin-authn-server.selectorLabels" . | nindent 4 }}

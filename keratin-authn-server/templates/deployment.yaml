@@ -30,38 +30,40 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
+            - name: internal
+              containerPort: 3001
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /health
               port: http
               httpHeaders:
                 - name: Host
-                  value:  {{ .Values.authnUrl }}
+                  value:  {{ .Values.appSettings.authnUrl | quote }}
           readinessProbe:
             httpGet:
               path: /health
               port: http
               httpHeaders:
                 - name: Host
-                  value:  {{ .Values.authnUrl }}
+                  value:  {{ .Values.appSettings.authnUrl | quote }}
          
           env:
             - name: AUTHN_URL
-              value: {{ .Values.appSettings.authnUrl }}
+              value: {{ required "A valid .Values.appSettings.authnUrl entry required!" .Values.appSettings.authnUrl | quote }}
             - name: APP_DOMAINS
-              value: {{ .Values.appSettings.appDomains }}
+              value: {{ required "A valid .Values.appSettings.appDomains entry required!" .Values.appSettings.appDomains | quote }}
             - name: PUBLIC_PORT
-              value: {{ .Values.appSettings.publicPort }}
-
+              value: "3000"
             - name: HTTP_AUTH_USERNAME
-              value: {{ .Values.internalApi.username }}
+              value: {{ required "A valid .Values.internalApi.username entry required!" .Values.internalApi.username | quote }}
             - name: HTTP_AUTH_PASSWORD
-              value: {{ .Values.internalApi.password }}
+              value: {{ required "A valid .Values.internalApi.password entry required!" .Values.internalApi.password | quote }}
             - name: PORT
-              value: {{ .Values.internalApi.port }}
+              value: "3001"
 
             - name: SECRET_KEY_BASE
-              value: {{ .Values.secretKeyBase }}
+              value: {{ required "A valid .Values.secretKeyBase entry required!" .Values.secretKeyBase | quote }}
             
             - name: DATABASE_URL
               value: {{ .Values.persistence.databaseUrl }}
