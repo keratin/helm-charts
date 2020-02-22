@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "keratin-authn-server.fullname" . }}-internal-api
+  labels:
+    {{- include "keratin-authn-server.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.serviceInternal.type }}
+  ports:
+    - port: {{ .Values.serviceInternal.port }}
+      targetPort: internal
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "keratin-authn-server.selectorLabels" . | nindent 4 }}
+ 

@@ -85,7 +85,11 @@ mariadb:
 service:
   type: ClusterIP
   port: 80
-  internal: 8080
+
+serviceInternal:
+  type: ClusterIP
+  port: 8080
+
 
 ingress:
   enabled: false
@@ -99,6 +103,19 @@ ingress:
   #  - secretName: auth-example-com-tls
   #    hosts:
   #      - auth.example.com
+
+ingressInternal:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: internal-api.example.com
+      paths: []
+  tls: []
+  #  - secretName: internal-api-example-com-tls
+  #    hosts:
+  #      - internal-api.example.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
