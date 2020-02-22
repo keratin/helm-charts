@@ -1,6 +1,8 @@
 # Keratin helm charts
 
-This chart makes it easier to deploy keratin auth server to k8s cluster.
+This chart makes it easier to deploy [keratin auth server](https://keratin.tech/) to k8s cluster.
+
+*This is a beta version of the chart. Feel free to use it and provide feedback*
 
 ## Chart configuration
 
@@ -23,9 +25,9 @@ Random secret string and password can be generated for example with the followin
 openssl rand -base64 48
 ```
 
-In this case redis and mariadb instanses will be deployed automatically from bitnami charts.
+In this case redis and mariadb instances will be deployed automatically from bitnami charts.
 
-If you use managed versions of redis or database you can override this settings with the following values:
+If you use managed versions of redis or database you can override these settings with the following values:
 ```
 persistence:
   databaseUrl: "mysql://user:password@host:3306/dbname"
@@ -39,9 +41,11 @@ mariadb:
   enabled: false
 ```
 
-## Chart build
+## Building the chart
 
-To download deps
+You need to build the chart only if you fork it and modify the templates. If you just install the chart - these steps are not needed.
+
+To download dependencies
 
 ```
 helm dep up ./keratin-authn-server/

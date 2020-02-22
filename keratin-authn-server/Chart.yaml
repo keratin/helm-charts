@@ -1,6 +1,6 @@
 apiVersion: v2
 name: keratin-authn-server
-description: Authn ready to use microservice implemented in golang 
+description: Ready to use authn microservice
 
 type: application
 version: 0.1.0
