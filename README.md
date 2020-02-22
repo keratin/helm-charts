@@ -2,17 +2,6 @@
 
 This chart makes it easier to deploy keratin auth server to k8s cluster.
 
-There are
-
-
-## Chart build
-
-To download deps
-
-```
-helm dep up ./keratin-authn-server/
-```
-
 ## Chart configuration
 
 Minimal values file:
@@ -48,4 +37,12 @@ redis:
 
 mariadb:
   enabled: false
+```
+
+## Chart build
+
+To download deps
+
+```
+helm dep up ./keratin-authn-server/
 ```
