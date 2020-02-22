@@ -65,8 +65,12 @@ spec:
             - name: SECRET_KEY_BASE
               value: {{ required "A valid .Values.secretKeyBase entry required!" .Values.secretKeyBase | quote }}
             
+            - name: DATABASE_PASSWORD
+              value: 
+
             - name: DATABASE_URL
               value: {{ .Values.persistence.databaseUrl }}
+              
             - name: REDIS_URL
               value: {{ include "redis.masterConnectString" . | quote }} 
               # value: {{ .Values.persistence.redisUrl }}
