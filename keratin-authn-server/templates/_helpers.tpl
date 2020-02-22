@@ -68,3 +68,45 @@ Redis master connection string
 {{- define "database.masterFullname" -}}
 {{- printf "mysql://%s-%s:3306/0" .Release.Name  "-database" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "envs" -}}
+            {{- range $key, $value := $.Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            - name: AUTHN_URL
+              value: {{ required "A valid .Values.appSettings.authnUrl entry required!" .Values.appSettings.authnUrl | quote }}
+            - name: APP_DOMAINS
+              value: {{ required "A valid .Values.appSettings.appDomains entry required!" .Values.appSettings.appDomains | quote }}
+            - name: PUBLIC_PORT
+              value: "3000"
+            - name: HTTP_AUTH_USERNAME
+              value: {{ required "A valid .Values.internalApi.username entry required!" .Values.internalApi.username | quote }}
+            - name: HTTP_AUTH_PASSWORD
+              value: {{ required "A valid .Values.internalApi.password entry required!" .Values.internalApi.password | quote }}
+            - name: PORT
+              value: "3001"
+            - name: SECRET_KEY_BASE
+              value: {{ required "A valid .Values.secretKeyBase entry required!" .Values.secretKeyBase | quote }}            
+            {{- if .Values.persistence.databaseUrl }}
+            - name: DATABASE_URL
+              value: {{ .Values.persistence.databaseUrl }}
+            {{- else }}
+              {{- if .Values.mariadb.enabled }} 
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-mariadb
+                  key: mariadb-password
+            - name: DATABASE_URL
+              value: "mysql://{{ .Values.mariadb.db.user }}:$(DATABASE_PASSWORD)@{{ .Release.Name }}-mariadb:{{ .Values.mariadb.service.port }}/{{ .Values.mariadb.db.name }}"
+              {{- end }}
+            {{- end }}
+            {{- if .Values.redis.enabled }}
+            - name: REDIS_URL
+              value: {{ include "redis.masterConnectString" . | quote }} 
+            {{- else }}
+            - name: REDIS_URL
+              value: {{ .Values.persistence.redisUrl | quote }} 
+            {{- end }}
+{{- end -}}
