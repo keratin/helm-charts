@@ -1,11 +1,12 @@
-1. Get the application URL by running these commands:
 {{- if .Values.ingress.enabled }}
+1. The application URL is:
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}
   http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ . }}
   {{- end }}
 {{- end }}
 {{- else if contains "NodePort" .Values.service.type }}
+1. Get the application URL by running these commands:
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "keratin-authn-server.fullname" . }})
   export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
   echo http://$NODE_IP:$NODE_PORT
@@ -15,7 +16,18 @@
   export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "keratin-authn-server.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
   echo http://$SERVICE_IP:{{ .Values.service.port }}
 {{- else if contains "ClusterIP" .Values.service.type }}
+1. Get the application URL by running these commands:
   export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "keratin-authn-server.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:80
+{{- end }}
+
+2. Internal API ingress controller: {{ if .Values.ingressInternal.enabled }}enabled{{ else }}disabled{{end}}
+{{- if .Values.ingressInternal.enabled }}
+  Internal API public URL:
+  {{- range $host := .Values.ingressInternal.hosts }}
+    {{- range .paths }}
+  http{{ if $.Values.ingressInternal.tls }}s{{ end }}://{{ $host.host }}{{ . }}
+    {{- end }}
+  {{- end }}
 {{- end }}
