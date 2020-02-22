@@ -49,6 +49,10 @@ spec:
                   value:  {{ .Values.appSettings.authnUrl | quote }}
          
           env:
+            {{- range $key, $value := $.Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
             - name: AUTHN_URL
               value: {{ required "A valid .Values.appSettings.authnUrl entry required!" .Values.appSettings.authnUrl | quote }}
             - name: APP_DOMAINS
@@ -61,24 +65,30 @@ spec:
               value: {{ required "A valid .Values.internalApi.password entry required!" .Values.internalApi.password | quote }}
             - name: PORT
               value: "3001"
-
             - name: SECRET_KEY_BASE
-              value: {{ required "A valid .Values.secretKeyBase entry required!" .Values.secretKeyBase | quote }}
-            
-            - name: DATABASE_PASSWORD
-              value: 
-
+              value: {{ required "A valid .Values.secretKeyBase entry required!" .Values.secretKeyBase | quote }}            
+            {{- if .Values.persistence.databaseUrl }}
             - name: DATABASE_URL
               value: {{ .Values.persistence.databaseUrl }}
-              
+            {{- else }}
+              {{- if .Values.mariadb.enabled }} 
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-mariadb
+                  key: mariadb-password
+            - name: DATABASE_URL
+              value: "mysql://{{ .Values.mariadb.db.user }}:$(DATABASE_PASSWORD)@{{ .Release.Name }}-mariadb:{{ .Values.mariadb.service.port }}/{{ .Values.mariadb.db.name }}"
+              {{- end }}
+            {{- end }}
+            {{- if .Values.redis.enabled }}
             - name: REDIS_URL
               value: {{ include "redis.masterConnectString" . | quote }} 
-              # value: {{ .Values.persistence.redisUrl }}
-
-            {{- range $key, $value := $.Values.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
+            {{- else }}
+            - name: REDIS_URL
+              value: {{ .Values.persistence.redisUrl | quote }} 
             {{- end }}
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
