@@ -41,12 +41,37 @@ mariadb:
   enabled: false
 ```
 
+## Installation 
+
+Add repository first: 
+
+```bash
+helm repo add keratin-authn-server https://obukhov.github.io/keratin-helm-repo/keratin-authn-server/
+```
+
+Create values.yaml file as described above.
+
+Install helm chart into your kubernetes with the following command (command for helm3)
+
+```bash
+helm upgrade --install --atomic -n <namespace> -f ./values.yaml <release name> keratin-authn-server/keratin-authn-server
+```
+
+### Helm2 installation
+
+If you want to install the chart with helm of version 2 install the 0.0.* version of the chart:
+
+```bash
+# This is the command for helm2
+helm install --name <release name> -n <namespace> -f ./values.yaml --version 0.0.1 keratin-authn-server/keratin-authn-server
+```
+
 ## Building the chart
 
 You need to build the chart only if you fork it and modify the templates. If you just install the chart - these steps are not needed.
 
 To download dependencies
 
-```
+```bash
 helm dep up ./keratin-authn-server/
 ```
