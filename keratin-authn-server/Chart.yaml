@@ -5,7 +5,10 @@ description: Ready to use authn microservice
 type: application
 version: 0.1.0
 appVersion: 1.7.0
-
+maintainers:
+  - email: a.a.obukhov@gmail.com
+    name: Aleks Obukhov
+  
 dependencies:
   - name: redis
     version: 10.4.x
