@@ -1,6 +1,6 @@
 # Keratin helm charts
 
-This chart makes it easier to deploy [keratin auth server](https://keratin.tech/) to k8s cluster.
+This chart makes it easier to deploy [keratin authn server](https://keratin.tech/) to k8s cluster.
 
 *This is a beta version of the chart. Feel free to use it and provide feedback*
 
@@ -66,12 +66,58 @@ If you want to install the chart with helm of version 2 install the 0.0.* versio
 helm install --name <release name> -n <namespace> -f ./values.yaml --version 0.0.1 keratin/keratin-authn-server
 ```
 
-## Building the chart
+## Configuration
 
-You need to build the chart only if you fork it and modify the templates. If you just install the chart - these steps are not needed.
+The following table lists the configurable parameters of the Adminer chart and the default values.
 
-To download dependencies
+| Parameter                         | Description                                                             | Default                     |
+| --------------------------------- | ----------------------------------------------------------------------- | --------------------------- |
+| **Image**                                                                                                                                 |
+| `image.repository`                | Image                                                                   | `keratin/authn-server`      |
+| `image.pullPolicy`                | Image pull policy                                                       | `IfNotPresent`              |
+| **Config**                                                                                                                                |
+| `appSettings.authnUrl`            | The base URL of the AuthN service                                       | `-`                         |
+| `appSettings.appDomains`          | Comma-delimited list of application trusted domains                     | `-`                         |
+| `internalApi.username`            | HTTP Basic Auth username to access internal API                         | `-`                         |
+| `internalApi.password`            | HTTP Basic Auth password to access internal API                         | `-`                         |
+| `secretKeyBase`                   | Random string to derive HMAC keys used by AuthN from                    | `-`                         |
+| **Service**                                                                                                                               |
+| `service.type`                    | Service type                                                            | `ClusterIP`                 |
+| `service.port`                    | The service port                                                        | `80`                        |
+| **Service for internal API**                                                                                                              |
+| `serviceInternal.type`            | Service type                                                            | `ClusterIP`                 |
+| `serviceInternal.port`            | The service port                                                        | `8080`                      |
+| **Ingress**                                                                                                                               |
+| `ingress.enabled`                 | Enables Ingress                                                         | `false`                     |
+| `ingress.annotations`             | Ingress annotations                                                     | `{}`                        |
+| `ingress.labels`                  | Custom labels                                                           | `{}`                        |
+| `ingress.hosts`                   | Ingress accepted hostnames                                              | `[]`                        |
+| `ingress.tls`                     | Ingress TLS configuration                                               | `[]`                        |
+| **Ingress for internal API** (if you have services outside of kubernetes cluster)                                                         |
+| `ingressInternal.enabled`         | Enables Ingress                                                         | `false`                     |
+| `ingressInternal.annotations`     | Ingress annotations                                                     | `{}`                        |
+| `ingressInternal.labels`          | Custom labels                                                           | `{}`                        |
+| `ingressInternal.hosts`           | Ingress accepted hostnames                                              | `[]`                        |
+| `ingressInternal.tls`             | Ingress TLS configuration                                               | `[]`                        |
+| **Resources**                                                                                                                             |
+| `resources`                       | CPU/Memory resource requests/limits                                     | `{}`                        |
+| **Tolerations**                                                                                                                           |
+| `tolerations`                     | Add tolerations                                                         | `[]`                        |
+| **NodeSelector**                                                                                                                          |
+| `nodeSelector`                    | node labels for pod assignment                                          | `{}`                        |
+| **Affinity**                                                                                                                              |
+| `affinity`                        | node/pod affinities                                                     | `{}`                        | 
 
-```bash
-helm dep up ./keratin-authn-server/
-```
+## Credits
+
+Initially inspired from https://github.com/mogaal/helm-charts/tree/master/adminer.
+
+## Contributing
+
+Feel free to contribute by making a [pull request](https://github.com/kratin/helm-charts/pull/new/master).
+
+Please read the official [Contribution Guide](https://github.com/helm/charts/blob/master/CONTRIBUTING.md) from Helm for more information on how you can contribute to this Chart.
+
+## License
+
+[Apache License 2.0](LICENSE.md)
