@@ -49,6 +49,12 @@ env: {}
   # SENTRY_DSN: ""
   # AIRBRAKE_CREDENTIALS: ""
 
+envFromSecret: {}
+  # - name: ENV_NAME
+  #   secret: secret-name
+  #   key: secret-key
+  #   optional: false
+
 podSecurityContext: {}
   # fsGroup: 2000
 
