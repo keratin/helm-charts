@@ -29,4 +29,30 @@ entries:
     urls:
     - https://github.com/keratin/helm-charts/releases/download/keratin-authn-server-0.1.1/keratin-authn-server-0.1.1.tgz
     version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.7.0
+    created: "2020-04-04T14:43:08.671714+02:00"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com
+      tags:
+      - keratin-authn-server
+      version: 10.4.x
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com
+      tags:
+      - keratin-authn-server
+      version: 7.x.x
+    description: Ready to use authn microservice
+    digest: 0e9783f42f6801a3a03cffcd1cb6205fbff60ede3178c3ad99625d117d515d1b
+    maintainers:
+    - email: a.a.obukhov@gmail.com
+      name: Aleks Obukhov
+    name: keratin-authn-server
+    type: application
+    urls:
+    - https://github.com/keratin/helm-charts/releases/download/keratin-authn-server-0.1.0/keratin-authn-server-0.1.0.tgz
+    version: 0.1.0
 generated: "2020-04-04T14:31:15.191425+02:00"

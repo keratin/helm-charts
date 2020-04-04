@@ -1,35 +1,37 @@
 .DEFAULT_GOAL := help
 
 ## Requirements:
-## helm and chart-releaser are installed
-## CR_TOKEN env variable is exported containing github token (for releases upload)
+## - helm and chart-releaser are installed
+## - CR_TOKEN env variable is exported containing github token
+
+.PHONY: update
+update: ## Update charts dependencies
+	helm dep update .
 
 .PHONY: release
-release: ## Creates or refreshes index.yaml file
-	# @make -s upload
-	cr index  --owner keratin --git-repo helm-charts --charts-repo http://keratin.github.io/ --package-path ./build/ --index-path ./../index.yaml
+release: ## Full cycle of release
+	@make -s clean
+	@make -s build
+	@make -s upload
+	@make -s index
 
+.PHONY: index
+index: ## Creates or refreshes index.yaml file
+	cr index  --owner keratin --git-repo helm-charts --charts-repo http://keratin.github.io/helm-charts --package-path ./build/ --index-path ./../index.yaml
 
 .PHONY: upload
 upload: ## Uploads the release and
-	@make -s package
 	cr upload --owner keratin --git-repo helm-charts --package-path ./build/
 
-
-.PHONY: update
-update: ## Update charts dependency
-	helm dep up .
-
-.PHONY: package
-package: ## Building a package from current version
-	@make -s clean
+.PHONY: build
+build: ## Building a package from current version
+	helm dep build .
 	helm package . --logtostderr --destination ./build/
-
 
 .PHONY: clean
 clean: ## Cleans and prepare the workspace
 	mkdir -p build
-	rm -fr build/*
+	rm -fr build/* charts/*
 
 .PHONY: help
 help: ## Help
