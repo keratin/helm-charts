@@ -109,4 +109,14 @@ Redis master connection string
             - name: REDIS_URL
               value: {{ .Values.persistence.redisUrl | quote }} 
             {{- end }}
+            {{- if $.Values.envFromSecret }}
+              {{- range $key, $value := $.Values.envFromSecret }}
+            - name: {{ $value.name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $value.secret }}
+                  key: {{ $value.key }}
+                  optional: {{ $value.optional | default false }}
+              {{- end }}
+            {{- end }}
 {{- end -}}
