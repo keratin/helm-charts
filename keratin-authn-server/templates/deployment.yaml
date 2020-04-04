@@ -44,19 +44,18 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /health
+              path: {{ include "urlPath" .Values.appSettings.authnUrl }}/health
               port: http
               httpHeaders:
                 - name: Host
-                  value:  {{ .Values.appSettings.authnUrl | quote }}
+                  value: {{ include "urlHost" .Values.appSettings.authnUrl }}
           readinessProbe:
             httpGet:
-              path: /health
+              path:  {{ include "urlPath" .Values.appSettings.authnUrl }}/health
               port: http
               httpHeaders:
                 - name: Host
-                  value:  {{ .Values.appSettings.authnUrl | quote }}
-         
+                  value:  {{ include "urlHost" .Values.appSettings.authnUrl }}
           env:
             {{- include "envs" . }}
 

@@ -5,7 +5,7 @@ home: https://keratin.tech
 icon: https://keratin.tech/pangolin-logo-dark.gif
 
 type: application
-version: 0.2.1
+version: 0.2.2
 appVersion: 1.8.0
 maintainers:
   - email: a.a.obukhov@gmail.com

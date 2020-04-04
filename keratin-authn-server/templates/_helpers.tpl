@@ -69,6 +69,14 @@ Redis master connection string
 {{- printf "mysql://%s-%s:3306/0" .Release.Name  "-database" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "urlPath" -}}
+{{ mustRegexReplaceAll "https?://([^/]*)(/.*)?" . "${2}" | trimSuffix "/" }}
+{{- end -}}
+
+{{- define "urlHost" -}}
+{{ mustRegexReplaceAll "https?://([^/]*)(/.*)?" . "${1}" }}
+{{- end -}}
+
 {{- define "envs" -}}
             {{- if $.Values.envFromSecret }}
               {{- range $key, $value := $.Values.envFromSecret }}
